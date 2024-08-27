@@ -31,7 +31,12 @@ RUN if [ "${USE_GPU}" = "true" ]; then \
     fi && \
     VOICEVOX_CORE_ASSET_PREFIX="voicevox_core-linux-${VOICEVOX_CORE_ASSET_TARGETARCH}-${VOICEVOX_CORE_ASSET_ASSET_PROCESSING}" && \
     VOICEVOX_CORE_ASSET_NAME=${VOICEVOX_CORE_ASSET_PREFIX}-${VOICEVOX_CORE_VERSION} && \
-    wget --no-check-certificate --header="Authorization: token ${GITHUB_TOKEN}" -nv -O "./${VOICEVOX_CORE_ASSET_NAME}.zip" "https://github.com/VOICEVOX/voicevox_core/releases/download/${VOICEVOX_CORE_VERSION}/${VOICEVOX_CORE_ASSET_NAME}.zip" && \
+    DOWNLOAD_URL="https://github.com/VOICEVOX/voicevox_core/releases/download/${VOICEVOX_CORE_VERSION}/${VOICEVOX_CORE_ASSET_NAME}.zip" && \
+    if [ -n "${GITHUB_TOKEN}" ]; then \
+        wget --no-check-certificate --header="Authorization: token ${GITHUB_TOKEN}" -nv -O "./${VOICEVOX_CORE_ASSET_NAME}.zip" "${DOWNLOAD_URL}"; \
+    else \
+        wget --no-check-certificate -nv -O "./${VOICEVOX_CORE_ASSET_NAME}.zip" "${DOWNLOAD_URL}"; \
+    fi && \
     unzip "./${VOICEVOX_CORE_ASSET_NAME}.zip" && \
     mkdir -p /opt/voicevox_core && \
     mv ${VOICEVOX_CORE_ASSET_NAME}/* /opt/voicevox_core/ && \
